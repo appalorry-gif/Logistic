@@ -1,0 +1,141 @@
+/* AdminShipments.css */
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-slate: #f8fafc;
+    --border-light: #e2e8f0;
+}
+
+.admin-shipments-container {
+    background-color: var(--bg-slate);
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1e293b;
+}
+
+/* Header & Breadcrumbs */
+.admin-header {
+    background: white;
+    border-bottom: 1px solid var(--border-light);
+    padding: 1.5rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.header-content {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* KPI Metric Cards */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+}
+
+/* Table Architecture */
+.shipment-table-container {
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+}
+
+.admin-table th {
+    background: #f1f5f9;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.admin-table td {
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.admin-table tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Data Clusters */
+.route-cluster, .load-cluster {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.text-bold { font-weight: 700; color: #0f172a; }
+.text-dim { font-size: 0.75rem; color: #94a3b8; }
+.text-money { font-weight: 800; color: #059669; }
+
+/* Status Pills */
+.status-pill {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.status-assigned { background: #eef2ff; color: #4338ca; }
+.status-in-transit { background: #eff6ff; color: #1d4ed8; }
+.status-completed { background: #f0fdf4; color: #15803d; }
+.status-pending { background: #fffbeb; color: #b45309; }
+
+/* Actions */
+.btn-icon {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    background: white;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: #f1f5f9;
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.action-stack {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}

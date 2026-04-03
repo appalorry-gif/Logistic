@@ -1,0 +1,183 @@
+/* src/pages/driver/DriverApp.css */
+
+/* 1. Core Container - Modern Web Dashboard (Dark SaaS Mode) */
+.driver-app-container {
+  background-color: #0B1120; /* Deep, professional web dark mode */
+  min-height: 100vh;
+  color: #F8FAFC;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 32px 24px;
+  max-width: 1200px; /* Web layout width */
+  margin: 0 auto; /* Center on large screens */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 2. Web Cards - Clean, Structured, and Hoverable */
+.glass-card {
+  background-color: #1E293B;
+  border: 1px solid #334155;
+  border-radius: 12px; /* Sharper, more professional web corners */
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Web-specific hover lift */
+.glass-card:hover {
+  border-color: #475569;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px); 
+}
+
+/* 3. Sleek Web Action Buttons */
+.action-btn {
+  display: inline-flex; /* Better for web layouts */
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px; /* Standard web button height (reduced from mobile 56px) */
+  padding: 0 24px;
+  border-radius: 8px; /* Sharper web corners */
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Primary Web Action */
+.action-btn.primary {
+  background-color: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.action-btn.primary:hover {
+  background-color: #1D4ED8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+/* Success Web Action */
+.action-btn.success {
+  background-color: #10B981;
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.action-btn.success:hover {
+  background-color: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Outline/Secondary Web Action */
+.action-btn.d-btn-outline {
+  background-color: transparent;
+  border: 1px solid #3B82F6;
+  color: #60A5FA;
+}
+
+.action-btn.d-btn-outline:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #93C5FD;
+}
+
+/* 4. Highly Legible Web Cargo Items */
+.cargo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: #0F172A;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #1E293B;
+  border-left: 4px solid #3B82F6; 
+  transition: background-color 0.2s ease;
+}
+
+.cargo-item:hover {
+  background-color: #162032; /* Mouse hover highlight for web */
+}
+
+/* 5. Desktop-Optimized Map/Route Timeline */
+.route-timeline {
+  position: relative;
+  padding-left: 36px; 
+  margin-top: 24px;
+}
+
+.route-timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 16px;
+  bottom: 30px;
+  width: 2px; /* Crisp web line */
+  background-color: #334155;
+}
+
+.route-step {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.route-step.active::before {
+  content: '';
+  position: absolute;
+  left: -29px; 
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #3B82F6;
+  border: 2px solid #0B1120;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+  z-index: 2;
+}
+
+.route-step.completed::before {
+  content: '';
+  position: absolute;
+  left: -29px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #10B981;
+  border: 2px solid #0B1120;
+  z-index: 2;
+}
+
+.route-step h3 {
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+
+.route-step p {
+  color: #94A3B8; 
+  line-height: 1.6; /* Better reading line-height for web */
+}
+
+/* 6. Web Responsive Grid Adjustments */
+@media (min-width: 768px) {
+  .driver-app-container {
+    padding: 40px 32px;
+  }
+  
+  /* On web, buttons shouldn't always be 100% wide */
+  .action-btn {
+    width: auto; 
+    min-width: 200px;
+    display: inline-flex;
+  }
+
+  .action-btn-container {
+    display: flex;
+    gap: 16px;
+    flex-direction: row;
+  }
+}
