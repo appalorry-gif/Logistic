@@ -7,6 +7,7 @@ import DriverProfile from './pages/driver/Driver profile';
 import ShipperDashboard from './shipper/Shipper dashboard';
 import ShipperLoads from './shipper/Shipper loads';
 import ShipperTracking from './shipper/Shipper tracking';
+
 import ShipperReports from './shipper/ShipperReports';
 import ShipperSettings from './shipper/ShipperSettings';
 
