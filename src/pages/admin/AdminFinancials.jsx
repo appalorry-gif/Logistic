@@ -1,8 +1,7 @@
 import React from 'react';
 import { 
-  IndianRupee, TrendingUp, ArrowUpRight, ArrowDownRight, 
-  FileText, Download, BarChart3, Clock, Wallet, ArrowRight,
-  Filter, CheckCircle2, AlertCircle
+  ArrowUpRight, ArrowDownRight, 
+  Download, Wallet, AlertCircle
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 

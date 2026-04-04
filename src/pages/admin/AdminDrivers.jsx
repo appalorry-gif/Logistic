@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  MoreVertical, Phone, Star, Truck, UserCheck, 
-  AlertCircle, ShieldCheck, ClipboardList, MapPin, 
-  ChevronRight, ArrowRight, Package 
+  MoreVertical, Phone, Star, Truck, 
+  AlertCircle, ClipboardList, Package 
 } from 'lucide-react';
 import './AdminDrivers.css';
 

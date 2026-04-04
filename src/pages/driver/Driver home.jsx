@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Navigation, Phone, Package, CheckCircle, ShieldAlert, Scale, Map as MapIcon, Box, Info, Clock, ArrowRight, IndianRupee, Target, Filter } from 'lucide-react';
+import { MapPin, Phone, CheckCircle, Map as MapIcon, Box, Clock, ArrowRight, IndianRupee, Target, Filter } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';

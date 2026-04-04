@@ -4,8 +4,8 @@ import {
   ResponsiveContainer, CartesianGrid 
 } from 'recharts';
 import { 
-  Truck, CheckCircle, Clock, IndianRupee, MapPin, 
-  Plus, Bell, LogOut, Users, Zap, MoreHorizontal, Navigation
+  Truck, CheckCircle, Clock, IndianRupee, 
+  LogOut, Users, Zap, MoreHorizontal, Navigation
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Polyline, Tooltip as MapTooltip } from 'react-leaflet';
 import L from 'leaflet';

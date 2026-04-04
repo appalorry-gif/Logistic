@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Truck, Search, Download, Eye, MessageSquare, Plus, 
-  Filter, ChevronRight, FileCheck, AlertCircle, MoreVertical,
+  Filter, ChevronRight, AlertCircle, MoreVertical,
   Package, User, Calendar, IndianRupee, MapPin
 } from 'lucide-react';
 import './AdminShipments.css';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Truck, Users, BarChart3, Settings, LogOut, Search, Menu, X, Plus } from 'lucide-react';
+import { LayoutDashboard, Truck, Users, BarChart3, LogOut, Search, Menu, X } from 'lucide-react';
 import AdminDashboard from './AdminDashboard';
 import AdminShipments from './AdminShipments';
 import AdminDrivers from './AdminDrivers';

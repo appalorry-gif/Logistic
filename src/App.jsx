@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, LogOut, ChevronRight, Navigation, IndianRupee } from 'lucide-react';
+import { Menu, X, LogOut, Navigation, IndianRupee } from 'lucide-react';
 import Login from './Login';
 import DriverHome from './pages/driver/Driver home';
 import DriverEarnings from './pages/driver/Driver earnings';
