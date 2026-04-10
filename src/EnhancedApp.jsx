@@ -5,6 +5,7 @@ import EnhancedDriverHome from './EnhancedDriverHome';
 import EnhancedCustomerDashboard from './EnhancedCustomerDashboard';
 import DriverEarnings from './driver-earnings';
 import DriverProfile from './driver-profile';
+import OwnerDriverTracker from './pages/driver/singleDriver/OwnerDriverTracker';
 import './styles/globals.css';
 
 function EnhancedApp() {
@@ -18,7 +19,13 @@ function EnhancedApp() {
     setIsLoggedIn(true);
     setUserRole(role);
     setUserName(email.split('@')[0]);
-    setCurrentTab('home');
+    if (role === 'driver') {
+      setCurrentTab('home');
+    } else if (role === 'owner') {
+      setCurrentTab('drivers');
+    } else {
+      setCurrentTab('home');
+    }
   };
 
   const handleLogout = () => {
@@ -33,8 +40,10 @@ function EnhancedApp() {
     return <Login onLogin={handleLogin} />;
   }
 
-  // ============ DRIVER APP ============
-  if (userRole === 'driver') {
+  // ============ DRIVER/OWNER APP ============
+  if (userRole === 'driver' || userRole === 'owner') {
+    const isOwner = userRole === 'owner';
+    const tabs = isOwner ? ['home', 'earnings', 'profile', 'drivers'] : ['home', 'earnings', 'profile'];
     return (
       <div className="bg-gradient-to-br from-[#0f1419] via-[#1a1f2e] to-[#0f1419] min-h-screen text-white font-sans flex flex-col">
         {/* Status Bar (Mobile) */}
@@ -52,7 +61,7 @@ function EnhancedApp() {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-xs opacity-90">Welcome back</p>
-              <h1 className="text-xl md:text-2xl font-bold">Rajesh Kumar</h1>
+              <h1 className="text-xl md:text-2xl font-bold">{isOwner ? 'Fleet Owner' : 'Rajesh Kumar'}</h1>
             </div>
             <div className="flex gap-3">
               <button
@@ -72,6 +81,7 @@ function EnhancedApp() {
             {currentTab === 'home' && <EnhancedDriverHome />}
             {currentTab === 'earnings' && <DriverEarnings />}
             {currentTab === 'profile' && <DriverProfile />}
+            {isOwner && currentTab === 'drivers' && <OwnerDriverTracker />}
           </div>
         </div>
 
@@ -104,6 +114,17 @@ function EnhancedApp() {
             <span className="text-2xl">👤</span>
             <span className="text-xs">Profile</span>
           </button>
+          {isOwner && (
+            <button
+              onClick={() => setCurrentTab('drivers')}
+              className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-all ${
+                currentTab === 'drivers' ? 'text-[#ff6b35]' : 'text-[#7aa3d1]'
+              }`}
+            >
+              <span className="text-2xl">🚛</span>
+              <span className="text-xs">Drivers</span>
+            </button>
+          )}
         </div>
       </div>
     );

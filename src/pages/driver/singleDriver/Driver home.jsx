@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, CheckCircle, Map as MapIcon, Box, Clock, ArrowRight, IndianRupee, Target, Filter } from 'lucide-react';
+import { 
+  MapPin, Phone, CheckCircle, Map as MapIcon, Box, Clock, ArrowRight, 
+  IndianRupee, Target, Filter, X, ShieldCheck, AlertCircle, FileText, 
+  CheckCircle2, Receipt, ListTodo
+} from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -14,9 +18,28 @@ L.Icon.Default.mergeOptions({
 
 const DriverHome = () => {
   const [taskStatus, setTaskStatus] = useState('heading_pickup'); 
+  const [selectedLoad, setSelectedLoad] = useState(null); // State for the Review Modal
+  const [infoModal, setInfoModal] = useState(null); // 'earnings' | 'tasks' | null
 
   // Driver Summary
   const dailyStats = { earningsToday: 1850, tasksCompleted: 2, tasksAssigned: 4 };
+
+  // Mock Data for the new Info Modals
+  const earningsDetails = [
+    { id: 'AWB#8849100', desc: 'Trip: Hebbal → Indiranagar', amount: 1100, time: '10:30 AM', status: 'Credited' },
+    { id: 'AWB#8849155', desc: 'Trip: KR Puram → Whitefield', amount: 750, time: '1:15 PM', status: 'Credited' }
+  ];
+
+  const tasksDetails = {
+    completed: [
+      { id: 'AWB#8849100', route: 'Hebbal → Indiranagar', time: '11:15 AM (Delivered)' },
+      { id: 'AWB#8849155', route: 'KR Puram → Whitefield', time: '2:00 PM (Delivered)' }
+    ],
+    pending: [
+      { id: 'AWB#8849201', route: 'Peenya → Koramangala', status: 'Active Now' },
+      { id: 'AWB#8849202', route: 'Electronic City → HSR', status: 'Queued' }
+    ]
+  };
 
   // Active Task Details
   const activeTask = {
@@ -31,10 +54,22 @@ const DriverHome = () => {
   };
 
   const availableLoads = [
-    { id: 'LD-902', from: 'Hebbal, BLR', to: 'Yelahanka, BLR', dist: '12 km', weight: '400 kg', rate: '₹750', tags: ['Fragile'], estTime: '25 mins' },
-    { id: 'LD-903', from: 'Whitefield, BLR', to: 'Indiranagar, BLR', dist: '15 km', weight: '800 kg', rate: '₹1,100', tags: ['Heavy'], estTime: '40 mins' },
-    { id: 'LD-904', from: 'Electronic City', to: 'Marathahalli', dist: '18 km', weight: '1,200 kg', rate: '₹1,450', tags: ['Fast Transit'], estTime: '45 mins' },
-    { id: 'LD-905', from: 'Yeshwanthpur', to: 'KR Puram', dist: '22 km', weight: '1,500 kg', rate: '₹1,850', tags: ['Standard'], estTime: '55 mins' }
+    { 
+      id: 'LD-902', from: 'Hebbal, BLR', to: 'Yelahanka, BLR', dist: '12 km', weight: '400 kg', rate: '₹750', tags: ['Fragile'], estTime: '25 mins',
+      shipper: 'Reliable Movers Pvt Ltd', shipperRating: '4.8',
+      pickupFull: 'Warehouse A1, Hebbal Industrial Estate, Bangalore 560024',
+      dropoffFull: 'Block C, Yelahanka New Town, Bangalore 560064',
+      commodity: 'Home Appliances', requirements: ['Covered Truck', 'Handle with Care'],
+      breakdown: { base: '₹600', toll: '₹50', bonus: '₹100' }
+    },
+    { 
+      id: 'LD-903', from: 'Whitefield, BLR', to: 'Indiranagar, BLR', dist: '15 km', weight: '800 kg', rate: '₹1,100', tags: ['Heavy'], estTime: '40 mins',
+      shipper: 'TechSupply India', shipperRating: '4.9',
+      pickupFull: 'Tech Park Zone 2, Whitefield, Bangalore 560066',
+      dropoffFull: '100ft Road, Indiranagar, Bangalore 560038',
+      commodity: 'Server Racks', requirements: ['Tail Lift', 'Straps Required'],
+      breakdown: { base: '₹900', toll: '₹50', bonus: '₹150' }
+    }
   ];
 
   const handleNextAction = () => {
@@ -44,8 +79,13 @@ const DriverHome = () => {
     else if (taskStatus === 'in_transit') setTaskStatus('completed');
   };
 
+  const handleAcceptLoad = () => {
+    alert(`Successfully assigned ${selectedLoad.id} to your queue!`);
+    setSelectedLoad(null);
+  };
+
   return (
-    <div className="w-full bg-[#F4F7FB] min-h-screen font-sans p-6">
+    <div className="w-full bg-[#F4F7FB] min-h-screen font-sans p-6 relative">
       <div className="max-w-[1400px] mx-auto space-y-6">
         
         {/* HEADER & TOP STATS */}
@@ -55,27 +95,38 @@ const DriverHome = () => {
             <p className="text-sm text-slate-500">Manage your active route and find new loads</p>
           </div>
           <div className="flex gap-4">
-            <div className="bg-white border border-slate-200 px-5 py-3 rounded-xl shadow-sm flex items-center gap-4">
-              <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600"><IndianRupee size={20}/></div>
+            
+            {/* CLICKABLE EARNINGS CARD */}
+            <div 
+              onClick={() => setInfoModal('earnings')}
+              className="bg-white border border-slate-200 px-5 py-3 rounded-xl shadow-sm flex items-center gap-4 cursor-pointer hover:border-emerald-300 hover:shadow-md transition-all group"
+            >
+              <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors"><IndianRupee size={20}/></div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Today's Earnings</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">Today's Earnings <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-500"/></p>
                 <p className="text-xl font-black text-slate-800">₹{dailyStats.earningsToday}</p>
               </div>
             </div>
-            <div className="bg-white border border-slate-200 px-5 py-3 rounded-xl shadow-sm flex items-center gap-4">
-              <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><Target size={20}/></div>
+
+            {/* CLICKABLE TASKS CARD */}
+            <div 
+              onClick={() => setInfoModal('tasks')}
+              className="bg-white border border-slate-200 px-5 py-3 rounded-xl shadow-sm flex items-center gap-4 cursor-pointer hover:border-blue-300 hover:shadow-md transition-all group"
+            >
+              <div className="bg-blue-100 p-2 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors"><Target size={20}/></div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tasks Progress</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">Tasks Progress <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-500"/></p>
                 <p className="text-xl font-black text-slate-800">{dailyStats.tasksCompleted} <span className="text-sm text-slate-400">/ {dailyStats.tasksAssigned}</span></p>
               </div>
             </div>
+
           </div>
         </div>
 
         {/* MAIN WEB DASHBOARD GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* LEFT COLUMN: ACTIVE TASK (Takes up 2/3 of screen) */}
+          {/* LEFT COLUMN: ACTIVE TASK */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             
             {taskStatus !== 'completed' ? (
@@ -97,8 +148,7 @@ const DriverHome = () => {
                 </div>
 
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                  
-                  {/* Web Layout: Details on left, Map on right */}
+                  {/* Layout: Details on left, Map on right */}
                   <div className="flex flex-col gap-6">
                     <div className="flex gap-4">
                       <div className="flex-1 bg-amber-50 border border-amber-100 p-3 rounded-lg flex items-center gap-3">
@@ -115,7 +165,6 @@ const DriverHome = () => {
                     <div className="relative pl-6">
                       <div className="absolute left-[9px] top-2 bottom-2 w-0.5 bg-slate-200"></div>
                       
-                      {/* Pickup */}
                       <div className="relative mb-6">
                         <div className={`absolute -left-[29px] top-1 w-3 h-3 rounded-full border-2 border-white ${(taskStatus === 'heading_pickup' || taskStatus === 'arrived_pickup' || taskStatus === 'loading') ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-emerald-500'}`}></div>
                         <h3 className="font-bold text-slate-900">Pickup: {activeTask.pickup.company}</h3>
@@ -125,7 +174,6 @@ const DriverHome = () => {
                         </div>
                       </div>
 
-                      {/* Dropoff */}
                       <div className={`relative ${taskStatus !== 'in_transit' ? 'opacity-50' : ''}`}>
                         <div className={`absolute -left-[29px] top-1 w-3 h-3 rounded-full border-2 border-white ${taskStatus === 'in_transit' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-slate-300'}`}></div>
                         <h3 className="font-bold text-slate-900">Dropoff: {activeTask.dropoff.company}</h3>
@@ -148,7 +196,6 @@ const DriverHome = () => {
                          ))}
                        </div>
                     </div>
-
                   </div>
 
                   {/* Web Embedded Map & Action Column */}
@@ -177,13 +224,13 @@ const DriverHome = () => {
 
                       {taskStatus === 'loading' && (
                         <button onClick={handleNextAction} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                          <CheckCircle size={18}/> Items Loaded • Start Trip
+                          <CheckCircle2 size={18}/> Items Loaded • Start Trip
                         </button>
                       )}
 
                       {taskStatus === 'in_transit' && (
                         <button onClick={handleNextAction} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                          <CheckCircle size={18}/> Mark as Delivered
+                          <CheckCircle2 size={18}/> Mark as Delivered
                         </button>
                       )}
                     </div>
@@ -199,16 +246,15 @@ const DriverHome = () => {
                 <h3 className="text-3xl font-black text-slate-800 mb-2">Trip Completed!</h3>
                 <p className="text-slate-500 mb-8 text-lg">Great job. <span className="font-bold text-emerald-600">₹3,450</span> has been credited to your account.</p>
                 <button onClick={() => setTaskStatus('heading_pickup')} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold shadow-md transition-all">
-                  Refresh Map
+                  Refresh Dashboard
                 </button>
               </div>
             )}
           </div>
 
-          {/* RIGHT COLUMN: OPEN LOAD BOARD (Takes up 1/3 of screen) */}
+          {/* RIGHT COLUMN: OPEN LOAD BOARD */}
           <div className="lg:col-span-1 flex flex-col gap-4">
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[calc(100vh-140px)] min-h-[600px]">
-              
               <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                 <h3 className="font-bold text-slate-800 flex items-center gap-2"><MapPin size={18} className="text-blue-600"/> Open Load Board</h3>
                 <button className="text-slate-400 hover:text-blue-600 transition-colors"><Filter size={18}/></button>
@@ -236,18 +282,146 @@ const DriverHome = () => {
                       <div><p className="text-[10px] text-slate-400 font-bold uppercase">Time</p><p className="text-xs font-bold text-slate-700">{load.estTime}</p></div>
                     </div>
 
-                    <button onClick={() => alert(`Accepted Load ${load.id}`)} className="w-full bg-slate-100 text-blue-600 font-bold py-2 rounded-lg text-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <button onClick={() => setSelectedLoad(load)} className="w-full bg-slate-100 text-blue-600 font-bold py-2 rounded-lg text-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
                       Review & Accept
                     </button>
                   </div>
                 ))}
               </div>
-              
             </div>
           </div>
-
         </div>
       </div>
+
+      {/* ==================================================== */}
+      {/* MODAL 1: LOAD REVIEW & ACCEPT                        */}
+      {/* ==================================================== */}
+      {selectedLoad && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <div>
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-100 px-2 py-0.5 rounded">{selectedLoad.id}</span>
+                <h2 className="text-xl font-black text-slate-800 mt-1">Review Load Assignment</h2>
+              </div>
+              <button onClick={() => setSelectedLoad(null)} className="p-2 bg-white border border-slate-200 rounded-full hover:bg-slate-100 text-slate-500 transition-colors"><X size={20} /></button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1 space-y-6">
+              <div className="flex flex-wrap justify-between items-center bg-blue-50 border border-blue-100 rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white p-2 rounded-lg shadow-sm"><ShieldCheck size={24} className="text-blue-600"/></div>
+                  <div>
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-0.5">Shipper</p>
+                    <p className="font-bold text-slate-800">{selectedLoad.shipper}</p>
+                  </div>
+                </div>
+                <div className="text-right mt-4 sm:mt-0">
+                  <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-0.5">Total Payout</p>
+                  <p className="text-3xl font-black text-emerald-600">{selectedLoad.rate}</p>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-slate-100 bg-white flex justify-end gap-3">
+              <button onClick={() => setSelectedLoad(null)} className="px-6 py-2.5 rounded-lg font-bold text-slate-600 hover:bg-slate-100">Cancel</button>
+              <button onClick={handleAcceptLoad} className="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold flex items-center gap-2"><CheckCircle2 size={18}/> Confirm & Accept Load</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* MODAL 2: EARNINGS BREAKDOWN (Clicked from KPI)       */}
+      {/* ==================================================== */}
+      {infoModal === 'earnings' && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-fade-in flex flex-col max-h-[85vh]">
+            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Receipt size={20} className="text-emerald-600"/> Today's Earnings</h2>
+              <button onClick={() => setInfoModal(null)} className="p-1 hover:bg-slate-200 rounded-lg text-slate-500"><X size={20}/></button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto bg-white">
+              <div className="text-center mb-8">
+                <p className="text-slate-500 text-sm font-semibold mb-1">Total Earned Today</p>
+                <p className="text-5xl font-black text-emerald-600">₹{dailyStats.earningsToday}</p>
+                <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">{new Date().toLocaleDateString('en-IN', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+              </div>
+
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2">Completed Trips</h3>
+              <div className="space-y-3">
+                {earningsDetails.map((item, idx) => (
+                  <div key={idx} className="flex justify-between items-center p-3 border border-slate-100 rounded-xl bg-slate-50">
+                    <div>
+                      <p className="font-bold text-slate-800 text-sm">{item.desc}</p>
+                      <p className="text-[10px] font-bold text-slate-400 mt-0.5">Ref: {item.id} • {item.time}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-emerald-600">+₹{item.amount}</p>
+                      <p className="text-[10px] font-bold text-emerald-500">{item.status}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100">
+              <button onClick={() => setInfoModal(null)} className="w-full bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-300">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* MODAL 3: TASKS PROGRESS (Clicked from KPI)           */}
+      {/* ==================================================== */}
+      {infoModal === 'tasks' && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-fade-in flex flex-col max-h-[85vh]">
+            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2"><ListTodo size={20} className="text-blue-600"/> Today's Itinerary</h2>
+              <button onClick={() => setInfoModal(null)} className="p-1 hover:bg-slate-200 rounded-lg text-slate-500"><X size={20}/></button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto bg-white space-y-6">
+              
+              {/* Completed Tasks */}
+              <div>
+                <h3 className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3 flex items-center gap-1"><CheckCircle2 size={14}/> Completed ({tasksDetails.completed.length})</h3>
+                <div className="space-y-3">
+                  {tasksDetails.completed.map((task, idx) => (
+                    <div key={idx} className="p-3 border border-emerald-100 rounded-xl bg-emerald-50 opacity-80">
+                      <p className="font-bold text-slate-700 text-sm line-through decoration-emerald-300">{task.route}</p>
+                      <p className="text-[10px] font-bold text-emerald-600 mt-1">{task.id} • {task.time}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pending Tasks */}
+              <div>
+                <h3 className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-3 flex items-center gap-1"><Clock size={14}/> Remaining Queue ({tasksDetails.pending.length})</h3>
+                <div className="space-y-3">
+                  {tasksDetails.pending.map((task, idx) => (
+                    <div key={idx} className={`p-3 border rounded-xl ${task.status === 'Active Now' ? 'border-blue-300 bg-blue-50' : 'border-slate-200 bg-white'}`}>
+                      <div className="flex justify-between items-start">
+                        <p className="font-bold text-slate-800 text-sm">{task.route}</p>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${task.status === 'Active Now' ? 'bg-blue-600 text-white animate-pulse' : 'bg-slate-100 text-slate-500'}`}>
+                          {task.status}
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-bold text-slate-400 mt-1">Ref: {task.id}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100">
+              <button onClick={() => setInfoModal(null)} className="w-full bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-300">Close Itinerary</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
