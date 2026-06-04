@@ -12,7 +12,9 @@ function EnhancedApp() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [userName, setUserName] = useState('');
+
   const [currentTab, setCurrentTab] = useState('home');
+  
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleLogin = (role, email) => {
